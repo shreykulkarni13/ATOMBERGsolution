@@ -15,8 +15,7 @@ function App() {
       status: "Pending",
     };
 
-    setGoals((prevGoals) => [...prevGoals, newGoal]);
-
+    setGoals([...goals, newGoal]);
     setGoalTitle("");
   };
 
@@ -40,38 +39,58 @@ function App() {
     );
   };
 
+  const getStatusClass = (status) => {
+    if (status === "Approved") return "approved";
+    if (status === "Rejected") return "rejected";
+    return "pending";
+  };
+
   if (role === "employee") {
     return (
       <div className="container">
-        <h1>Employee Dashboard</h1>
+        <div className="topbar">
+          <h1 className="dashboard-title">
+            Employee Dashboard
+          </h1>
 
-        <input
-          type="text"
-          placeholder="Enter Goal"
-          value={goalTitle}
-          onChange={(e) => setGoalTitle(e.target.value)}
-        />
-
-        <button onClick={addGoal}>Add Goal</button>
-
-        <br />
-
-        <button onClick={() => setRole("")}>
-          Logout
-        </button>
-
-        <div className="goals">
-          {goals.length === 0 ? (
-            <p>No goals added yet</p>
-          ) : (
-            goals.map((goal) => (
-              <div key={goal.id} className="card">
-                <h3>{goal.title}</h3>
-                <p>Status: {goal.status}</p>
-              </div>
-            ))
-          )}
+          <button
+            className="logout-btn"
+            onClick={() => setRole("")}
+          >
+            Logout
+          </button>
         </div>
+
+        <div className="add-goal-section">
+          <input
+            type="text"
+            placeholder="Enter your goal..."
+            value={goalTitle}
+            onChange={(e) => setGoalTitle(e.target.value)}
+          />
+
+          <button onClick={addGoal}>
+            Add Goal
+          </button>
+        </div>
+
+        {goals.length === 0 ? (
+          <p className="empty-text">
+            No goals added yet.
+          </p>
+        ) : (
+          <div className="cards-container">
+            {goals.map((goal) => (
+              <div key={goal.id} className="goal-card">
+                <h3>{goal.title}</h3>
+
+                <p className={`status ${getStatusClass(goal.status)}`}>
+                  {goal.status}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -79,29 +98,51 @@ function App() {
   if (role === "manager") {
     return (
       <div className="container">
-        <h1>Manager Dashboard</h1>
+        <div className="topbar">
+          <h1 className="dashboard-title">
+            Manager Dashboard
+          </h1>
 
-        <button onClick={() => setRole("")}>
-          Logout
-        </button>
+          <button
+            className="logout-btn"
+            onClick={() => setRole("")}
+          >
+            Logout
+          </button>
+        </div>
 
         {goals.length === 0 ? (
-          <p>No goals available</p>
+          <p className="empty-text">
+            No goals available.
+          </p>
         ) : (
-          goals.map((goal) => (
-            <div key={goal.id} className="card">
-              <h3>{goal.title}</h3>
-              <p>Status: {goal.status}</p>
+          <div className="cards-container">
+            {goals.map((goal) => (
+              <div key={goal.id} className="goal-card">
+                <h3>{goal.title}</h3>
 
-              <button onClick={() => approveGoal(goal.id)}>
-                Approve
-              </button>
+                <p className={`status ${getStatusClass(goal.status)}`}>
+                  {goal.status}
+                </p>
 
-              <button onClick={() => rejectGoal(goal.id)}>
-                Reject
-              </button>
-            </div>
-          ))
+                <div className="action-buttons">
+                  <button
+                    className="approve-btn"
+                    onClick={() => approveGoal(goal.id)}
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    className="reject-btn"
+                    onClick={() => rejectGoal(goal.id)}
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     );
@@ -110,41 +151,63 @@ function App() {
   if (role === "admin") {
     return (
       <div className="container">
-        <h1>Admin Dashboard</h1>
+        <div className="topbar">
+          <h1 className="dashboard-title">
+            Admin Dashboard
+          </h1>
 
-        <button onClick={() => setRole("")}>
-          Logout
-        </button>
+          <button
+            className="logout-btn"
+            onClick={() => setRole("")}
+          >
+            Logout
+          </button>
+        </div>
 
         {goals.length === 0 ? (
-          <p>No goals found</p>
+          <p className="empty-text">
+            No goals found.
+          </p>
         ) : (
-          goals.map((goal) => (
-            <div key={goal.id} className="card">
-              <h3>{goal.title}</h3>
-              <p>Status: {goal.status}</p>
-            </div>
-          ))
+          <div className="cards-container">
+            {goals.map((goal) => (
+              <div key={goal.id} className="goal-card">
+                <h3>{goal.title}</h3>
+
+                <p className={`status ${getStatusClass(goal.status)}`}>
+                  {goal.status}
+                </p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <h1>Goal Tracking Portal</h1>
+    <div className="container home">
+      <h1 className="portal-title">
+        Goal Tracking Portal
+      </h1>
 
-      <button onClick={() => setRole("employee")}>
-        Employee Login
-      </button>
+      <p className="portal-subtitle">
+        In-House Goal Setting & Performance Tracking System
+      </p>
 
-      <button onClick={() => setRole("manager")}>
-        Manager Login
-      </button>
+      <div className="role-buttons">
+        <button onClick={() => setRole("employee")}>
+          Employee
+        </button>
 
-      <button onClick={() => setRole("admin")}>
-        Admin Login
-      </button>
+        <button onClick={() => setRole("manager")}>
+          Manager
+        </button>
+
+        <button onClick={() => setRole("admin")}>
+          Admin
+        </button>
+      </div>
     </div>
   );
 }
